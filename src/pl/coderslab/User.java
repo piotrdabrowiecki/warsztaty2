@@ -117,6 +117,19 @@ public class User {
             this.id = 0;
         }
     }
+    static public User loadAllByGroupId(Connection conn, int id){
+
+
+
+
+
+        
+
+
+
+
+
+    }
 
 
 
