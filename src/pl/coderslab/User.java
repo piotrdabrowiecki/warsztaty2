@@ -37,11 +37,23 @@ public class User {
         this.email = email;
     }
 
-    private void setPassword(String password) {
+    public void setPassword(String password) {
 
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
 
     }
+    public void setUsername(String username){
+
+
+        this.username = username;
+
+    }
+    public void setUserGroup(UserGroup userGroup){
+
+        this.userGroup = userGroup;
+
+    }
+
     public void saveToDB(Connection conn) throws SQLException {
         if (this.id == 0) {
             String sql = "INSERT INTO users(username, email, password, user_group_id) VALUES (?, ?, ?, ?)";
@@ -117,13 +129,27 @@ public class User {
             this.id = 0;
         }
     }
-    static public User loadAllByGroupId(Connection conn, int id){
+    static public User[] loadAllByGroupId(Connection conn, int id) throws SQLException{
+        ArrayList<User> users_by_group = new ArrayList<User>();
+        String sql = "SELECT * FROM users where user_group_id = ? ";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            User loadedUser = new User();
+            loadedUser.id = resultSet.getInt("id");
+            loadedUser.username = resultSet.getString("username");
+            loadedUser.password = resultSet.getString("password");
+            loadedUser.email = resultSet.getString("email");
+            loadedUser.userGroup = UserGroup.loadUserGroupById(conn, resultSet.getInt("user_group_id"));
+            users_by_group.add(loadedUser);}
+        User[] uArray = new User[users_by_group.size()]; uArray = users_by_group.toArray(uArray);
+        return uArray;
 
 
 
 
 
-        
+
 
 
 
